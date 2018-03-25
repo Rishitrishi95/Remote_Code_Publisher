@@ -1,0 +1,86 @@
+<html>
+<head>
+   <link rel = "stylesheet" href ="..\mystylesheet.css">
+   <script src="..\myjsscript.js"></script>
+</head>
+<body>
+<pre><hr /><div class="indent" >
+<h4>Dependencies:</h4>
+<a href=CLIShim.h.htm>CLIShim.h</a>
+</div>
+  <hr />
+ <pre>
+/////////////////////////////////////////////////////////////////////////
+// CLIShim.cpp - C++\CLI layer is a proxy for calls into MockChannel   //
+//                                                                     //
+// Note:                                                               //
+//   - build as a dll so C# can load                                   //
+//   - link to MockChannel static library                              //
+//                                                                     //
+// Jim Fawcett, CSE687 - Object Oriented Design, Spring 2017           //
+/////////////////////////////////////////////////////////////////////////
+
+#include "CLIShim.h"
+#include &lt;iostream&gt;
+
+//----&lt; convert std::string to System.String &gt;---------------------------
+
+String^ Shim::stdStrToSysStr(const std::string& str)
+{
+<input onclick="expand_collapse(simplediv20.id, this.id)" type="button" value=" - " id="myButton20" /><div id="simplediv20" style="display:block; ">
+  return gcnew String(str.c_str());
+}</div>
+//----&lt; convert System.String to std::string &gt;---------------------------
+
+std::string Shim::sysStrToStdStr(String^ str)
+{
+<input onclick="expand_collapse(simplediv21.id, this.id)" type="button" value=" - " id="myButton21" /><div id="simplediv21" style="display:block; ">
+  std::string temp;
+  for (int i = 0; i &lt; str-&gt;Length; ++i)
+    temp += char(str[i]);
+  return temp;
+}</div>
+//----&lt; Constructor sets up sender and receiver &gt;------------------------
+
+Shim::Shim()
+{
+<input onclick="expand_collapse(simplediv22.id, this.id)" type="button" value=" - " id="myButton22" /><div id="simplediv22" style="display:block; ">
+  ObjectFactory factory;
+  pSendr = factory.createSendr();
+  pRecvr = factory.createRecvr();
+  pMockChan = factory.createMockChannel(pSendr, pRecvr);
+  pMockChan-&gt;start();
+}</div>
+//----&lt; put message into channel &gt;---------------------------------------
+
+void Shim::PostMessage(Message^ msg)
+{
+<input onclick="expand_collapse(simplediv23.id, this.id)" type="button" value=" - " id="myButton23" /><div id="simplediv23" style="display:block; ">
+  pSendr-&gt;postMessage(sysStrToStdStr(msg));
+}</div>
+//----&lt; retrieve message from channel &gt;----------------------------------
+
+String^ Shim::GetMessage()
+{
+<input onclick="expand_collapse(simplediv24.id, this.id)" type="button" value=" - " id="myButton24" /><div id="simplediv24" style="display:block; ">
+  std::string msg = pRecvr-&gt;getMessage();
+  return stdStrToSysStr(msg);
+}</div>
+
+#ifdef TEST_CLISHIM_LAYER
+
+int main()
+{
+<input onclick="expand_collapse(simplediv25.id, this.id)" type="button" value=" - " id="myButton25" /><div id="simplediv25" style="display:block; ">
+  String^ msg = "Hello from sender";
+  Shim^ pShim = gcnew Shim();
+  std::cout &lt;&lt; "\n  sending message \"" &lt;&lt; pShim-&gt;sysStrToStdStr(msg) &lt;&lt; "\"";
+  pShim-&gt;PostMessage(msg);
+  String^ pReply = pShim-&gt;GetMessage();
+  std::cout &lt;&lt; "\n  received message \"" &lt;&lt; pShim-&gt;sysStrToStdStr(pReply) &lt;&lt; "\"";
+  std::cout &lt;&lt; "\n\n";
+}</div>
+#endif
+</pre>
+</body>
+</html>

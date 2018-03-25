@@ -1,0 +1,47 @@
+<html>
+<head>
+   <link rel = "stylesheet" href ="..\mystylesheet.css">
+   <script src="..\myjsscript.js"></script>
+</head>
+<body>
+<pre><hr /><div class="indent" >
+<h4>Dependencies:</h4>
+</div>
+  <hr />
+ <pre>
+#pragma once
+///////////////////////////////////////////////////////////////////////
+// CLIShim.h - C++\CLI layer is a proxy for calls into MockChannel   //
+//                                                                   //
+// Note:                                                             //
+//   - build as a dll so C# can load                                 //
+//   - link to MockChannel static library                            //
+//                                                                   //
+// Jim Fawcett, CSE687 - Object Oriented Design, Spring 2017         //
+///////////////////////////////////////////////////////////////////////
+
+#include "../MockChannel/MockChannel.h"
+#include &lt;string&gt;
+using namespace System;
+
+public ref class Shim
+{
+<input onclick="expand_collapse(simplediv0.id, this.id)" type="button" value=" - " id="myButton0" /><div id="simplediv0" style="display:block; ">
+public:
+  using Message = String;
+
+  Shim();
+  void PostMessage(Message^ msg);
+  String^ GetMessage();
+  String^ stdStrToSysStr(const std::string& str);
+  std::string sysStrToStdStr(String^ str);
+private:
+  ISendr* pSendr;
+  IRecvr* pRecvr;
+  IMockChannel* pMockChan;
+}</div>;
+
+
+</pre>
+</body>
+</html>

@@ -1,0 +1,9 @@
+
+                                             CodeAnalysis
+    ==============================================================================================
+     Sun Apr  2 09:29:26 2017
+     Path: "\\vboxsvr\Downloads\OOD\Project3_start\Saved\CodeAnalyzer\ScopeStack"
+     Args: *.h, *.cpp, /f, /r, storeMyDependencyInfo.xml, storeMyStrongComponents.xml, ..\StoreHTMFiles
+                                                                               
+    searched     6 dirs
+   processed     2 files

@@ -1,0 +1,7 @@
+<html>
+<head>
+   <link rel = "stylesheet" href ="..\mystylesheet.css">
+   <script src="..\myjsscript.js"></script>
+</head>
+<body>
+<pre>

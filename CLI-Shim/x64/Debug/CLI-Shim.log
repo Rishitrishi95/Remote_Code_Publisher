@@ -1,0 +1,12 @@
+﻿  CLIShim.cpp
+  .NETFramework,Version=v4.5.2.AssemblyAttributes.cpp
+  CLIShim.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
+CLIShim.obj : error LNK2028: unresolved token (0A000489) "public: struct ISendr * __cdecl ObjectFactory::createSendr(void)" (?createSendr@ObjectFactory@@$$FQEAAPEAUISendr@@XZ) referenced in function "public: __clrcall Shim::Shim(void)" (??0Shim@@$$FQE$AAM@XZ)
+CLIShim.obj : error LNK2028: unresolved token (0A00048A) "public: struct IRecvr * __cdecl ObjectFactory::createRecvr(void)" (?createRecvr@ObjectFactory@@$$FQEAAPEAUIRecvr@@XZ) referenced in function "public: __clrcall Shim::Shim(void)" (??0Shim@@$$FQE$AAM@XZ)
+CLIShim.obj : error LNK2028: unresolved token (0A00048B) "public: struct IMockChannel * __cdecl ObjectFactory::createMockChannel(struct ISendr *,struct IRecvr *)" (?createMockChannel@ObjectFactory@@$$FQEAAPEAUIMockChannel@@PEAUISendr@@PEAUIRecvr@@@Z) referenced in function "public: __clrcall Shim::Shim(void)" (??0Shim@@$$FQE$AAM@XZ)
+CLIShim.obj : error LNK2019: unresolved external symbol "public: struct ISendr * __cdecl ObjectFactory::createSendr(void)" (?createSendr@ObjectFactory@@$$FQEAAPEAUISendr@@XZ) referenced in function "public: __clrcall Shim::Shim(void)" (??0Shim@@$$FQE$AAM@XZ)
+CLIShim.obj : error LNK2019: unresolved external symbol "public: struct IRecvr * __cdecl ObjectFactory::createRecvr(void)" (?createRecvr@ObjectFactory@@$$FQEAAPEAUIRecvr@@XZ) referenced in function "public: __clrcall Shim::Shim(void)" (??0Shim@@$$FQE$AAM@XZ)
+CLIShim.obj : error LNK2019: unresolved external symbol "public: struct IMockChannel * __cdecl ObjectFactory::createMockChannel(struct ISendr *,struct IRecvr *)" (?createMockChannel@ObjectFactory@@$$FQEAAPEAUIMockChannel@@PEAUISendr@@PEAUIRecvr@@@Z) referenced in function "public: __clrcall Shim::Shim(void)" (??0Shim@@$$FQE$AAM@XZ)
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\Debug\MsgClient.lib : warning LNK4272: library machine type 'X86' conflicts with target machine type 'x64'
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\Debug\MockChannel.lib : warning LNK4272: library machine type 'X86' conflicts with target machine type 'x64'
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\x64\Debug\CLIShim.dll : fatal error LNK1120: 6 unresolved externals

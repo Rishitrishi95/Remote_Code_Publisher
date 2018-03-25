@@ -1,0 +1,15 @@
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\bin\Debug\WPFTest.exe.config
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\bin\Debug\WPFTest.exe
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\bin\Debug\WPFTest.pdb
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\bin\Debug\CLIShim.dll
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\bin\Debug\CLIShim.pdb
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\obj\Debug\GUI.csprojResolveAssemblyReference.cache
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\obj\Debug\MainWindow.baml
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\obj\Debug\MainWindow.g.cs
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\obj\Debug\App.g.cs
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\obj\Debug\WPFTest_MarkupCompile.cache
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\obj\Debug\WPFTest.g.resources
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\obj\Debug\WPFTest.Properties.Resources.resources
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\obj\Debug\GUI.csproj.GenerateResource.Cache
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\obj\Debug\WPFTest.exe
+C:\Users\rmuth\Desktop\Project4\Project4_831608197\WPFTest\obj\Debug\WPFTest.pdb

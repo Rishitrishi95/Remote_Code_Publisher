@@ -1,0 +1,135 @@
+<html>
+<head>
+   <link rel = "stylesheet" href ="..\mystylesheet.css">
+   <script src="..\myjsscript.js"></script>
+</head>
+<body>
+<pre><hr /><div class="indent" >
+<h4>Dependencies:</h4>
+</div>
+  <hr />
+ <pre>
+#ifndef DEPENDANAL_H
+#define DEPENDANAL_H
+/////////////////////////////////////////////////////////////////////
+// DependAnal.h - Store the type information needed for dependency //
+//                between the files                                //
+// ver 1.0                                                         //
+//-----------------------------------------------------------------//
+// Saisumanth Gopisetty (c) copyright 2015                      //
+// All rights granted provided this copyright notice is retained   //
+//-----------------------------------------------------------------//
+// Language:    C++, Visual Studio 2015                            //
+// Application: TYpe Based Dependency Analysis                     //
+//              CSE687 - Object Oriented Design                    //
+// Author:      Saisumanth Gopisetty, Syracuse University       //
+//              sgopiset@syr.edu                                   //
+/////////////////////////////////////////////////////////////////////
+
+//* Operations:
+//* This package is used to build Dependency graph from the Type table information.
+//* Uisng The Typetable constructed as part of Type Table package, this package
+//* parses each file, extracts each token and fetches all the dependencies and populates the 
+//* graph.
+
+//* Required Files :
+//*-------------- -
+//*-TypeAnalysis.h, TypeAnalysis.cpp,
+//*Parser.h, Parser.cpp
+//*Tokenizer.h,Tokenizer.cpp
+//*ScopeStack.h,ScopeStack.cpp
+//*SemiExp.h,SemiExp.cpp
+//*itokcollection.h
+
+
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include &lt;unordered_map&gt;
+#include &lt;set&gt;
+#include &lt;iostream&gt;
+#include "../DepthAnalysis/TypeAnalysis.h"
+#include "../Parser/Parser.h"
+#include "../Analyzer/Executive.h"
+#include "../SemiExp/itokcollection.h"
+#include "../ScopeStack/ScopeStack.h"
+#include "../Tokenizer/Tokenizer.h"
+#include "../SemiExp/SemiExp.h"
+#include "../Graph/Graph.h"
+
+using namespace Scanner;
+namespace CodeAnalysis
+{
+<input onclick="expand_collapse(simplediv2.id, this.id)" type="button" value=" - " id="myButton2" /><div id="simplediv2" style="display:block; ">
+	class DependAnal
+	{
+<input onclick="expand_collapse(simplediv3.id, this.id)" type="button" value=" - " id="myButton3" /><div id="simplediv3" style="display:block; ">
+		using Path = std::string;
+		using Pattern = std::string;
+		using Patterns = std::vector&lt;Pattern&gt;;
+		using File = std::string;
+		using Files = std::vector&lt;File&gt;;
+		using Ext = std::string;
+		using Options = std::vector&lt;char&gt;;
+		using FileMap = std::unordered_map&lt;Pattern, Files&gt;;
+		using DependMap = std::unordered_map&lt;std::string, std::set&lt;std::string&gt;&gt;;
+	public:
+		DependAnal::DependAnal() : typeTable_(Repository::getInstance()-&gt;typeTable()),
+			                       dependendencyGraph(Repository::getInstance()-&gt;dependencyGraph())
+		{
+<input onclick="expand_collapse(simplediv4.id, this.id)" type="button" value=" - " id="myButton4" /><div id="simplediv4" style="display:block; ">
+			pToker = new Toker;
+			pToker-&gt;returnComments(false);
+			pSemi = new SemiExp(pToker);
+			pParser = new Parser(pSemi);
+		}</div>
+		DependAnal::~DependAnal()
+		{
+<input onclick="expand_collapse(simplediv5.id, this.id)" type="button" value=" - " id="myButton5" /><div id="simplediv5" style="display:block; ">
+			delete pParser;
+			delete pSemi;
+			delete pToker;
+			if (pIn != nullptr)
+				pIn-&gt;close();
+			delete pIn;
+		}</div>
+		
+		bool ProcessCommandLine(int argc, char* argv[]);
+	
+		//----&lt; Initilizes all the vertices beforehand &gt;--------------
+		void InitializeVertices();
+		//----&lt; Process the sources code and builds the dependency graph &gt;--------------
+		void processSourceCode();
+		bool Attach(const std::string& name);
+		
+		//----&lt; Adds a dependency to the graph for a vertex &gt;--------------
+		void addDependencyToGraph(const std::string &fileName1_, const std::string &fileName2_);
+
+		Graph&lt;std::string, std::string&gt;& fetchDependencyGraph() {
+<input onclick="expand_collapse(simplediv6.id, this.id)" type="button" value=" - " id="myButton6" /><div id="simplediv6" style="display:block; "> return dependendencyGraph;  }</div>
+		//----&lt; returns the dependency Table &gt;--------------
+		DependMap& returnDependenyTable() {
+<input onclick="expand_collapse(simplediv7.id, this.id)" type="button" value=" - " id="myButton7" /><div id="simplediv7" style="display:block; "> return dependendencyMap; }</div>
+		//----&lt;fetches all the source file which are to be processed &gt;--------------
+		void fetchSourcseFiles();
+		//----&lt; Displays all the elements in the graphs &gt;--------------
+		void displayGraph();
+		
+	private:
+		Path path_;
+		Patterns patterns_;
+		Options options_;
+		FileMap fileMap_;
+		std::ifstream* pIn;
+		Scanner::Toker* pToker;
+		Scanner::SemiExp* pSemi;
+		Parser* pParser;
+		TypeTable &typeTable_;
+		DependMap dependendencyMap;
+		Graph&lt;std::string, std::string&gt; &dependendencyGraph;
+		Display&lt;std::string, std::string&gt; dependDisplay_;
+	}</div>;
+}</div>
+#endif
+</pre>
+</body>
+</html>

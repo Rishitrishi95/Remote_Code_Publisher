@@ -1,0 +1,277 @@
+<html>
+<head>
+   <link rel = "stylesheet" href ="..\mystylesheet.css">
+   <script src="..\myjsscript.js"></script>
+</head>
+<body>
+<pre><hr /><div class="indent" >
+<h4>Dependencies:</h4>
+<a href=ParallelTypeAnal.h.htm>ParallelTypeAnal.h</a>
+</div>
+  <hr />
+ <pre>
+/////////////////////////////////////////////////////////////////////////
+// ParallelTypeAnal.cpp - This package builds a mock of all of pass 1  //
+//                                                                     //
+// Jim Fawcett, CSE687 - Object Oriented Design, Spring 2016           //
+/////////////////////////////////////////////////////////////////////////
+
+#include "ParallelTypeAnal.h"
+#include "../Utilities/Utilities.h"
+
+//----&lt; pretends to execute type analysis on single file &gt;-----------
+
+void TypeAnal::doTypeAnal(const TypeAnal::File& filename)
+{
+<input onclick="expand_collapse(simplediv54.id, this.id)" type="button" value=" - " id="myButton54" /><div id="simplediv54" style="display:block; ">
+  // Sleep is here so table merge doesn't process all tables and
+  // block on table queue before notification by FileMgr of number
+  // of files processed.
+
+  ::Sleep(1);
+
+  static size_t count = 0;
+  Show::write(
+    "\n  analyzing file \"" +
+    filename + "\" on thread " +
+    Utilities::Converter&lt;std::thread::id&gt;::toString(std::this_thread::get_id())
+    );
+  // create and enQueue mock table
+
+  tableQ_.enQ("Table" + Utilities::Converter&lt;size_t&gt;::toString(++count));
+}</div>
+//----&lt; initialize TableMerge and its done event &gt;-------------------
+
+TableMerge::TableMerge(BlockingQueue&lt;TypeAnal::Table&gt;& tableQ)
+  : tableQ_(tableQ), dnEvt_(this)
+{
+<input onclick="expand_collapse(simplediv55.id, this.id)" type="button" value=" - " id="myButton55" /><div id="simplediv55" style="display:block; ">
+  future_ = promise_.get_future();  // needed for wait function
+}</div>
+//----&lt; register done event handler with FileMgr &gt;-------------------
+
+void TableMerge::registerForDone(FileManager::IFileMgr* pFileMgr)
+{
+<input onclick="expand_collapse(simplediv56.id, this.id)" type="button" value=" - " id="myButton56" /><div id="simplediv56" style="display:block; ">
+  pFileMgr-&gt;regForDone(&dnEvt_);
+  numFilesProcessed_.store((size_t)0);
+}</div>
+//----&lt; display progress &gt;-------------------------------------------
+
+void TableMerge::showProgress(std::atomic&lt;size_t&gt;& numFilesProcessed, size_t numTablesProcessed)
+{
+<input onclick="expand_collapse(simplediv57.id, this.id)" type="button" value=" - " id="myButton57" /><div id="simplediv57" style="display:block; ">
+  Show::write(
+    "\n  tm - numFilesProcessed = " +
+    Utilities::Converter&lt;size_t&gt;::toString(numFilesProcessed.load())
+    );
+  Show::write(
+    "\n  tm - numTablesProcessed = " +
+    Utilities::Converter&lt;size_t&gt;::toString(numTablesProcessed)
+    );
+}</div>
+//----&lt; pretend to merge symbol tables &gt;-----------------------------
+
+TypeAnal::Table TableMerge::merge()
+{
+<input onclick="expand_collapse(simplediv58.id, this.id)" type="button" value=" - " id="myButton58" /><div id="simplediv58" style="display:block; ">
+  TypeAnal::Table table;
+  numTablesProcessed_ = 0;
+  while (true)
+  {
+<input onclick="expand_collapse(simplediv59.id, this.id)" type="button" value=" - " id="myButton59" /><div id="simplediv59" style="display:block; ">
+    // The test, below, prevents merge from blocking on table queue after all the tables
+    // have been processed.  It assumes that each file analysis will generate a table,
+    // even if empty.
+
+    if ((numFilesProcessed_.load() == 0) || (numTablesProcessed_ &lt; numFilesProcessed_.load()))
+    {
+<input onclick="expand_collapse(simplediv60.id, this.id)" type="button" value=" - " id="myButton60" /><div id="simplediv60" style="display:block; ">
+      ++numTablesProcessed_;
+      showProgress(numFilesProcessed_, numTablesProcessed_);
+      table = tableQ_.deQ();
+      merged_ += table;
+      merged_ += " ";
+      Show::write(
+        "\n -----------------\n    mock " +
+        table + "\n -----------------"
+      );
+      if (table == "quit")
+      {
+<input onclick="expand_collapse(simplediv61.id, this.id)" type="button" value=" - " id="myButton61" /><div id="simplediv61" style="display:block; ">
+        while (numFilesProcessed_.load() == 0)  // spin until done event propagates here
+          ::Sleep(10);
+        showProgress(numFilesProcessed_, numTablesProcessed_);
+      }</div>
+    }</div>
+    else
+    {
+<input onclick="expand_collapse(simplediv62.id, this.id)" type="button" value=" - " id="myButton62" /><div id="simplediv62" style="display:block; ">
+      Show::write("\n  releasing future");
+      promise_.set_value(numFilesProcessed_);  // unblocks future
+      break;
+    }</div>
+  }</div>
+  return merged_;
+}</div>
+//----&lt; called by MergeDoneEventHandler::execute(...) &gt;------------
+
+void TableMerge::done(size_t numFilesProcessed)
+{
+<input onclick="expand_collapse(simplediv63.id, this.id)" type="button" value=" - " id="myButton63" /><div id="simplediv63" style="display:block; ">
+  Show::write("\n------- done event handled in TableMerge -------");
+  numFilesProcessed_.store(numFilesProcessed);
+}</div>
+//----&lt; ParallelTypeAnalysis calls to wait for merge to finish &gt;------
+
+size_t TableMerge::wait()
+{
+<input onclick="expand_collapse(simplediv64.id, this.id)" type="button" value=" - " id="myButton64" /><div id="simplediv64" style="display:block; ">
+  size_t numFiles = future_.get();
+  return numFiles;
+}</div>
+//----&lt; initlze Exec and TypeAnal, TableMerge, and evnt hndlrs &gt;-----
+
+ParallelTypeAnalysis::ParallelTypeAnalysis(const Path& path)
+  : ta_(tableQueue_), tm_(tableQueue_), fevt_(this), devt_(this), dnEvt_(this)
+{
+<input onclick="expand_collapse(simplediv65.id, this.id)" type="button" value=" - " id="myButton65" /><div id="simplediv65" style="display:block; ">
+  FileManager::FileMgrFactory factory;
+  pFileMgr_ = factory.create(path);
+  pFileMgr_-&gt;regForFiles(&fevt_);
+  pFileMgr_-&gt;regForDirs(&devt_);
+  pFileMgr_-&gt;regForDone(&dnEvt_);
+  tm_.registerForDone(pFileMgr_);
+}</div>
+//----&lt; add to patterns collection &gt;---------------------------------
+
+void ParallelTypeAnalysis::addPattern(const Pattern& pattern)
+{
+<input onclick="expand_collapse(simplediv66.id, this.id)" type="button" value=" - " id="myButton66" /><div id="simplediv66" style="display:block; ">
+  pFileMgr_-&gt;addPattern(pattern);
+}</div>
+//----&lt; start up the processing pipeline &gt;---------------------------
+
+void ParallelTypeAnalysis::start()
+{
+<input onclick="expand_collapse(simplediv67.id, this.id)" type="button" value=" - " id="myButton67" /><div id="simplediv67" style="display:block; ">
+  tmco_ = [this]() -&gt; bool
+  {
+<input onclick="expand_collapse(simplediv68.id, this.id)" type="button" value=" - " id="myButton68" /><div id="simplediv68" style="display:block; ">
+    Show::write("\n  starting table merge");
+    tm_.merge();
+    return true;
+  }</div>;
+  task_.workItem(tmco_);
+
+  fsco_ = [this]()
+  {
+<input onclick="expand_collapse(simplediv69.id, this.id)" type="button" value=" - " id="myButton69" /><div id="simplediv69" style="display:block; ">
+    Show::write("\n  starting file search");
+    pFileMgr_-&gt;search();
+    return true;
+  }</div>;
+  task_.workItem(fsco_);
+}</div>
+//----&lt; shut down the threadpool &gt;-----------------------------------
+
+void ParallelTypeAnalysis::stop()
+{
+<input onclick="expand_collapse(simplediv70.id, this.id)" type="button" value=" - " id="myButton70" /><div id="simplediv70" style="display:block; ">
+  CallObj exit = []() -&gt; bool {
+<input onclick="expand_collapse(simplediv71.id, this.id)" type="button" value=" - " id="myButton71" /><div id="simplediv71" style="display:block; "> return false; }</div>;
+  task_.workItem(exit);
+}</div>
+//----&lt; wait for the merge process to finish &gt;-----------------------
+
+void ParallelTypeAnalysis::wait()
+{
+<input onclick="expand_collapse(simplediv72.id, this.id)" type="button" value=" - " id="myButton72" /><div id="simplediv72" style="display:block; ">
+  tm_.wait();
+}</div>
+//----&lt; handler for file events from FileMgr &gt;-----------------------
+
+void ParallelTypeAnalysis::file(const File& file)
+{
+<input onclick="expand_collapse(simplediv73.id, this.id)" type="button" value=" - " id="myButton73" /><div id="simplediv73" style="display:block; ">
+  DebugLog::write("\n  analyzing file \"" + file + "\"");
+  File fileSpec = path_ + "\\" + file;
+  taco_ = [this, fileSpec]() -&gt; bool {
+<input onclick="expand_collapse(simplediv74.id, this.id)" type="button" value=" - " id="myButton74" /><div id="simplediv74" style="display:block; ">
+    ta_.doTypeAnal(fileSpec);
+    return true;
+  }</div>;
+
+  task_.workItem(taco_);  // threadpool will make copy
+}</div>
+//----&lt; handler for dir events from FileMgr &gt;------------------------
+
+void ParallelTypeAnalysis::dir(const Path& path)
+{
+<input onclick="expand_collapse(simplediv75.id, this.id)" type="button" value=" - " id="myButton75" /><div id="simplediv75" style="display:block; ">
+  path_ = path;
+}</div>
+//----&lt; handler for done event from FileMgr, not used &gt;--------------
+
+void ParallelTypeAnalysis::done(size_t numFilesProcessed)
+{
+<input onclick="expand_collapse(simplediv76.id, this.id)" type="button" value=" - " id="myButton76" /><div id="simplediv76" style="display:block; ">
+  fileSearchDone = true;
+  tableQueue_.enQ("quit");
+}</div>
+
+void AnalFileEventHandler::execute(const std::string& file)
+{
+<input onclick="expand_collapse(simplediv77.id, this.id)" type="button" value=" - " id="myButton77" /><div id="simplediv77" style="display:block; ">
+  pExec_-&gt;file(file);
+}</div>
+
+void AnalDirEventHandler::execute(const std::string& dir)
+{
+<input onclick="expand_collapse(simplediv78.id, this.id)" type="button" value=" - " id="myButton78" /><div id="simplediv78" style="display:block; ">
+  pExec_-&gt;dir(dir);
+}</div>
+
+void AnalDoneEventHandler::execute(size_t numFilesProcessed)
+{
+<input onclick="expand_collapse(simplediv79.id, this.id)" type="button" value=" - " id="myButton79" /><div id="simplediv79" style="display:block; ">
+  pExec_-&gt;done(numFilesProcessed);
+}</div>
+
+void MergeDoneEventHandler::execute(size_t numFilesProcessed)
+{
+<input onclick="expand_collapse(simplediv80.id, this.id)" type="button" value=" - " id="myButton80" /><div id="simplediv80" style="display:block; ">
+  pTM_-&gt;done(numFilesProcessed);
+}</div>
+
+#ifdef TEST_PARALLELTYPEANAL
+
+using namespace Utilities;
+using Utils = StringHelper;
+
+int main()
+{
+<input onclick="expand_collapse(simplediv81.id, this.id)" type="button" value=" - " id="myButton81" /><div id="simplediv81" style="display:block; ">
+  Utils::Title("Testing MockDepAnal");
+
+  Show::attach(&std::cout);
+  Show::start();
+  DebugLog::attach(&std::cout);
+
+  std::string msg = "\n  numFilesProcessed will be displayed as zero until FileMgr";
+  msg += "\n  notifies TableMerge of the number of files processed\n";
+  Show::write(msg);
+  ParallelTypeAnalysis exec("../..");
+  exec.addPattern("*.h");
+  exec.addPattern("*.cpp");
+  exec.start();
+  exec.wait();  // wait for table merge to complete
+  exec.stop();  // shut down thread pool - in full solution won't do this
+                // until the end of Pass #2
+  Show::stop();
+  DebugLog::stop();
+}</div>
+#endif
+</pre>
+</body>
+</html>

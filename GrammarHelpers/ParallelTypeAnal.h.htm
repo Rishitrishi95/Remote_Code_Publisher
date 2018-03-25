@@ -1,0 +1,189 @@
+<html>
+<head>
+   <link rel = "stylesheet" href ="..\mystylesheet.css">
+   <script src="..\myjsscript.js"></script>
+</head>
+<body>
+<pre><hr /><div class="indent" >
+<h4>Dependencies:</h4>
+</div>
+  <hr />
+ <pre>
+#pragma once
+/////////////////////////////////////////////////////////////////////////
+// ParallelTypeAnal.h - This package builds a mock of all of pass 1    //
+//                                                                     //
+// Jim Fawcett, CSE687 - Object Oriented Design, Spring 2016           //
+/////////////////////////////////////////////////////////////////////////
+/*
+ * No real type analysis is done here, but this mock sets up all the 
+ * event handling and data flow needed, using a ThreadPool and Task class
+ * to manage a lot of concurrency in a relatively easy way.
+ *
+ * This package depends on the packages:
+ * - ParallelTypeAnal - ParallelTypeAnalysis, TypeAnal, TableMerge, 
+ *                      and EventHandler classes
+ * - IFileMgr         - IFileMgr interface
+ * - FileMgr          - FileMgr, AnalFileEventHandler, AnalDirEventHandler, 
+ *                      and AnalDoneEventHandler classes
+ * - Task             - Task class
+ * - ThreadPool       - ThreadPool class
+ * - Logger           - Logger and StaticLogger&lt;size_t&gt;
+ * - BlockingQueue    - BlockingQueue&lt;T&gt; used by the three previous packages
+ * - Utilities        - Converter&lt;T&gt; has toString and toValue methods, 
+ *                      and several other helper classes
+*/
+#include &lt;string&gt;
+#include &lt;iostream&gt;
+#include &lt;sstream&gt;
+#include &lt;future&gt;
+#include &lt;atomic&gt;
+#include "../Cpp11-BlockingQueue/Cpp11-BlockingQueue.h"
+#include "../FileMgr/IFileMgr.h"
+#include "../FileMgr/FileMgr.h"
+#include "../Logger/Logger.h"
+#include "../Utilities/Utilities.h"
+#include "../Tasks/Task.h"
+
+using Show = StaticLogger&lt;0&gt;;
+using DebugLog = StaticLogger&lt;1&gt;;
+
+/////////////////////////////////////////////////////////////////////
+// TypeAnal class
+// - Responsible for analyzing types and functions in a single file.
+// - For complete solution this becomes the package TypeAnal
+//
+class TypeAnal
+{
+<input onclick="expand_collapse(simplediv922.id, this.id)" type="button" value=" - " id="myButton922" /><div id="simplediv922" style="display:block; ">
+public:
+  using File = std::string;
+  using Table = std::string;  // simple for demo
+
+  TypeAnal(BlockingQueue&lt;Table&gt;& tableQ) : tableQ_(tableQ) {
+<input onclick="expand_collapse(simplediv923.id, this.id)" type="button" value=" - " id="myButton923" /><div id="simplediv923" style="display:block; ">}</div>
+  void doTypeAnal(const File& filename);
+
+private:
+  BlockingQueue&lt;Table&gt;& tableQ_;
+}</div>;
+
+/////////////////////////////////////////////////////////////////////
+// TableMerge class
+// - Responsible for merging type tables as they arrive in table queue
+// - For complete solution this becomes package TableMerge
+//
+class TableMerge;
+
+class MergeDoneEventHandler : public FileManager::IDoneEventHandler
+{
+<input onclick="expand_collapse(simplediv924.id, this.id)" type="button" value=" - " id="myButton924" /><div id="simplediv924" style="display:block; ">
+public:
+  MergeDoneEventHandler(TableMerge* pTM) : pTM_(pTM) {
+<input onclick="expand_collapse(simplediv925.id, this.id)" type="button" value=" - " id="myButton925" /><div id="simplediv925" style="display:block; ">}</div>
+  void execute(size_t numFilesProcessed);
+private:
+  TableMerge* pTM_;
+}</div>;
+
+class TableMerge
+{
+<input onclick="expand_collapse(simplediv926.id, this.id)" type="button" value=" - " id="myButton926" /><div id="simplediv926" style="display:block; ">
+public:
+  TableMerge(BlockingQueue&lt;TypeAnal::Table&gt;& tableQ);
+  void registerForDone(FileManager::IFileMgr* pFileMgr);
+  TypeAnal::Table merge();
+  void done(size_t numFilesProcessed);
+  size_t wait();
+private:
+  void showProgress(std::atomic&lt;size_t&gt;& numFilesProcessed, size_t numTablesProcessed);
+  BlockingQueue&lt;TypeAnal::Table&gt;& tableQ_;
+  TypeAnal::Table merged_;
+  size_t numTablesCreated = 0;
+  FileManager::IFileMgr* pFileMgr_;
+  MergeDoneEventHandler dnEvt_;
+  std::atomic&lt;size_t&gt; numFilesProcessed_;  // shared by FileMgr and TableMerge
+  size_t numTablesProcessed_ = 0;
+  std::future&lt;size_t&gt; future_;
+  std::promise&lt;size_t&gt; promise_;
+}</div>;
+
+/////////////////////////////////////////////////////////////////////
+// Analysis Event Handlers
+
+class ParallelTypeAnalysis;
+
+class AnalFileEventHandler : public FileManager::IFileEventHandler
+{
+<input onclick="expand_collapse(simplediv927.id, this.id)" type="button" value=" - " id="myButton927" /><div id="simplediv927" style="display:block; ">
+public:
+  AnalFileEventHandler(ParallelTypeAnalysis* pExec) : pExec_(pExec) {
+<input onclick="expand_collapse(simplediv928.id, this.id)" type="button" value=" - " id="myButton928" /><div id="simplediv928" style="display:block; ">}</div>
+  void execute(const std::string& file);
+private:
+  ParallelTypeAnalysis* pExec_;
+}</div>;
+
+class AnalDirEventHandler : public FileManager::IDirEventHandler
+{
+<input onclick="expand_collapse(simplediv929.id, this.id)" type="button" value=" - " id="myButton929" /><div id="simplediv929" style="display:block; ">
+public:
+  AnalDirEventHandler(ParallelTypeAnalysis* pExec) : pExec_(pExec) {
+<input onclick="expand_collapse(simplediv930.id, this.id)" type="button" value=" - " id="myButton930" /><div id="simplediv930" style="display:block; ">}</div>
+  void execute(const std::string& dir);
+private:
+  ParallelTypeAnalysis* pExec_;
+}</div>;
+
+class AnalDoneEventHandler : public FileManager::IDoneEventHandler
+{
+<input onclick="expand_collapse(simplediv931.id, this.id)" type="button" value=" - " id="myButton931" /><div id="simplediv931" style="display:block; ">
+public:
+  AnalDoneEventHandler(ParallelTypeAnalysis* pExec) : pExec_(pExec) {
+<input onclick="expand_collapse(simplediv932.id, this.id)" type="button" value=" - " id="myButton932" /><div id="simplediv932" style="display:block; ">}</div>
+  void execute(size_t numFilesProcessed);
+private:
+  ParallelTypeAnalysis* pExec_;
+}</div>;
+
+/////////////////////////////////////////////////////////////////////
+// ParallelTypeAnalysis class
+// - Responsible for creating FileManager, TypeAnal, and TableMerge
+// - Runs FileMgr::search(), TypeAnal::doTypeAnal(), and TableMerge::merge()
+//   on ThreadPool threads, using the Task class
+//
+class ParallelTypeAnalysis
+{
+<input onclick="expand_collapse(simplediv933.id, this.id)" type="button" value=" - " id="myButton933" /><div id="simplediv933" style="display:block; ">
+public:
+  using File = std::string;
+  using Path = std::string;
+  using Pattern = std::string;
+  using CallObj = std::function&lt;bool()&gt;;
+
+  ParallelTypeAnalysis(const Path& path);
+  void addPattern(const Pattern& pattern);
+  void start();
+  void stop();
+  void wait();
+  void file(const File& file);
+  void dir(const Path& path);
+  void done(size_t numFilesProcessed);
+private:
+  TypeAnal ta_;
+  TableMerge tm_;
+  BlockingQueue&lt;TypeAnal::Table&gt; tableQueue_;
+  Path path_;
+  Task&lt;8&gt; task_;
+  FileManager::IFileMgr* pFileMgr_;
+  AnalFileEventHandler fevt_;
+  AnalDirEventHandler devt_;
+  AnalDoneEventHandler dnEvt_;
+  bool fileSearchDone = false;
+  CallObj tmco_;  // table merge
+  CallObj taco_;  // type anal
+  CallObj fsco_;  // file search
+}</div>;
+</pre>
+</body>
+</html>

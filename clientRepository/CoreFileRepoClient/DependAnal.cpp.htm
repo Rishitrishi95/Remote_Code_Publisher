@@ -1,0 +1,265 @@
+<html>
+<head>
+   <link rel = "stylesheet" href ="..\mystylesheet.css">
+   <script src="..\myjsscript.js"></script>
+</head>
+<body>
+<pre><hr /><div class="indent" >
+<h4>Dependencies:</h4>
+<a href=DependAnal.h.htm>DependAnal.h</a>
+</div>
+  <hr />
+ <pre>
+/////////////////////////////////////////////////////////////////////
+// DependAnal.cpp - Store the type information needed for          //
+//                  dependency between the files                   //
+// ver 1.0                                                         //
+//-----------------------------------------------------------------//
+// Saisumanth Gopisetty (c) copyright 2015                      //
+// All rights granted provided this copyright notice is retained   //
+//-----------------------------------------------------------------//
+// Language:    C++, Visual Studio 2015                            //
+// Application: TYpe Based Dependency Analysis                     //
+//              CSE687 - Object Oriented Design                    //
+// Author:     Saisumanth Gopisetty, Syracuse University       //
+//             sgopiset@syr.edu     
+// Maintainance History: Created on March 4th,2017
+/////////////////////////////////////////////////////////////////////
+
+// This cpp file implements all the declarations in header files 
+// of DependAnal.h
+
+#include "DependAnal.h"
+#include "../FileSystem/FileSystem.h"
+#include "../Parser/Parser.h"
+#include &lt;vector&gt;
+#include &lt;sstream&gt;
+
+using namespace CodeAnalysis;
+
+//----This method displays the Graph
+void DependAnal::displayGraph()
+{
+<input onclick="expand_collapse(simplediv12.id, this.id)" type="button" value=" - " id="myButton12" /><div id="simplediv12" style="display:block; ">
+	dependDisplay_.show(dependendencyGraph);
+}</div>
+
+
+//----This method adds the dependencies to the graph
+void DependAnal::addDependencyToGraph(const std::string &fileName1_, const std::string &fileName2_)
+{
+<input onclick="expand_collapse(simplediv13.id, this.id)" type="button" value=" - " id="myButton13" /><div id="simplediv13" style="display:block; ">
+	static int i = 0;
+	int index1 = -1;
+	int index2 = -1;
+	for (size_t j = 0; j &lt; dependendencyGraph.size(); j++)
+	{
+<input onclick="expand_collapse(simplediv14.id, this.id)" type="button" value=" - " id="myButton14" /><div id="simplediv14" style="display:block; ">
+		Vertex&lt;std::string, std::string&gt;& v1 = dependendencyGraph[j];
+		if (v1.value() == fileName1_)
+		{
+<input onclick="expand_collapse(simplediv15.id, this.id)" type="button" value=" - " id="myButton15" /><div id="simplediv15" style="display:block; ">
+			index1 = (int)j;
+		}</div>
+		if (v1.value() == fileName2_)
+		{
+<input onclick="expand_collapse(simplediv16.id, this.id)" type="button" value=" - " id="myButton16" /><div id="simplediv16" style="display:block; ">
+			index2 = (int)j;
+		}</div>
+	}</div>
+
+	std::stringstream ss;
+	ss.str("");
+	ss &lt;&lt; "Edge" &lt;&lt; i;
+	if ((index1 != -1) && (index2 != -1))
+	{
+<input onclick="expand_collapse(simplediv17.id, this.id)" type="button" value=" - " id="myButton17" /><div id="simplediv17" style="display:block; ">
+		if (dependendencyGraph.addEdge(ss.str(), dependendencyGraph[index1], dependendencyGraph[index2]) == true)
+		{
+<input onclick="expand_collapse(simplediv18.id, this.id)" type="button" value=" - " id="myButton18" /><div id="simplediv18" style="display:block; ">
+			i++;
+		}</div>
+	}</div>
+}</div>
+
+
+
+
+bool DependAnal::Attach(const std::string& name)
+{
+<input onclick="expand_collapse(simplediv19.id, this.id)" type="button" value=" - " id="myButton19" /><div id="simplediv19" style="display:block; ">
+	if (pToker == 0)
+		return false;
+	if (pIn != nullptr)
+	{
+<input onclick="expand_collapse(simplediv20.id, this.id)" type="button" value=" - " id="myButton20" /><div id="simplediv20" style="display:block; ">
+		pIn-&gt;close();
+		delete pIn;
+	}</div>
+	pIn = new std::ifstream(name);
+	if (!pIn-&gt;good())
+		return false;
+
+	char a, b, c;
+	a = pIn-&gt;get();
+	b = pIn-&gt;get();
+	c = pIn-&gt;get();
+	if (a != (char)0xEF || b != (char)0xBB || c != (char)0xBF)
+		pIn-&gt;seekg(0);
+
+	if (!pIn-&gt;good())
+	{
+<input onclick="expand_collapse(simplediv21.id, this.id)" type="button" value=" - " id="myButton21" /><div id="simplediv21" style="display:block; ">
+		return true;
+	}</div>
+	return pToker-&gt;attach(pIn);
+}</div>
+
+//------This method initializes all the vertices
+void DependAnal::InitializeVertices()
+{
+<input onclick="expand_collapse(simplediv22.id, this.id)" type="button" value=" - " id="myButton22" /><div id="simplediv22" style="display:block; ">
+	static int i = 0;
+	for (auto item : fileMap_)
+	{
+<input onclick="expand_collapse(simplediv23.id, this.id)" type="button" value=" - " id="myButton23" /><div id="simplediv23" style="display:block; ">
+		for (auto file : item.second)
+		{
+<input onclick="expand_collapse(simplediv24.id, this.id)" type="button" value=" - " id="myButton24" /><div id="simplediv24" style="display:block; ">
+			Vertex&lt;std::string, std::string&gt; vert(file, i);
+			if (dependendencyGraph.addVertex(vert) == true)
+			{
+<input onclick="expand_collapse(simplediv25.id, this.id)" type="button" value=" - " id="myButton25" /><div id="simplediv25" style="display:block; ">
+				i++;
+			}</div>
+		}</div>
+	}</div>
+
+}</div>
+
+
+//-----This method fetched all the source files
+void DependAnal::fetchSourcseFiles()
+{
+<input onclick="expand_collapse(simplediv26.id, this.id)" type="button" value=" - " id="myButton26" /><div id="simplediv26" style="display:block; ">
+	AnalFileMgr fm(path_, fileMap_);
+	for (auto patt : patterns_)
+		fm.addPattern(patt);
+	fm.search();
+}</div>
+
+
+//------This method processes the code and get the arguments
+
+bool DependAnal::ProcessCommandLine(int argc, char* argv[])
+{
+<input onclick="expand_collapse(simplediv27.id, this.id)" type="button" value=" - " id="myButton27" /><div id="simplediv27" style="display:block; ">
+	if (argc &lt; 2)
+	{
+<input onclick="expand_collapse(simplediv28.id, this.id)" type="button" value=" - " id="myButton28" /><div id="simplediv28" style="display:block; ">
+		return false;
+	}</div>
+	try {
+<input onclick="expand_collapse(simplediv29.id, this.id)" type="button" value=" - " id="myButton29" /><div id="simplediv29" style="display:block; ">
+		path_ = FileSystem::Path::getFullFileSpec(argv[1]);
+		if (!FileSystem::Directory::exists(path_))
+		{
+<input onclick="expand_collapse(simplediv30.id, this.id)" type="button" value=" - " id="myButton30" /><div id="simplediv30" style="display:block; ">
+			std::cout &lt;&lt; "\n\n  path \"" &lt;&lt; path_ &lt;&lt; "\" does not exist\n\n";
+			return false;
+		}</div>
+
+		for (int i = 2; i &lt; argc; ++i)
+		{
+<input onclick="expand_collapse(simplediv31.id, this.id)" type="button" value=" - " id="myButton31" /><div id="simplediv31" style="display:block; ">
+			if (argv[i][0] == '/')
+				options_.push_back(argv[i][1]);
+			else
+				patterns_.push_back(argv[i]);
+		}</div>
+		if (patterns_.size() == 0)
+		{
+<input onclick="expand_collapse(simplediv32.id, this.id)" type="button" value=" - " id="myButton32" /><div id="simplediv32" style="display:block; ">
+			return false;
+		}</div>
+	}</div>
+	catch (std::exception& ex)
+	{
+<input onclick="expand_collapse(simplediv33.id, this.id)" type="button" value=" - " id="myButton33" /><div id="simplediv33" style="display:block; ">
+		std::cout &lt;&lt; "\n\n  Error in passing command line arguments";
+		std::cout &lt;&lt; "\n  " &lt;&lt; ex.what() &lt;&lt; "\n\n";
+		return false;
+	}</div>
+
+	return true;
+}</div>
+
+//-----This method processes the source code and performs the depndency analyiis on the Type table
+void DependAnal::processSourceCode()
+{
+<input onclick="expand_collapse(simplediv34.id, this.id)" type="button" value=" - " id="myButton34" /><div id="simplediv34" style="display:block; ">InitializeVertices();
+	for (auto item : fileMap_)
+	{
+<input onclick="expand_collapse(simplediv35.id, this.id)" type="button" value=" - " id="myButton35" /><div id="simplediv35" style="display:block; ">
+		for (auto file : item.second)
+		{
+<input onclick="expand_collapse(simplediv36.id, this.id)" type="button" value=" - " id="myButton36" /><div id="simplediv36" style="display:block; ">
+			Attach(file);
+			std::string fileName_;
+			if (file.find_last_of("\\") &lt; file.length())
+				fileName_ = file.substr(file.find_last_of("\\") + 1);
+			while (pParser-&gt;next())
+			{
+<input onclick="expand_collapse(simplediv37.id, this.id)" type="button" value=" - " id="myButton37" /><div id="simplediv37" style="display:block; ">
+				std::vector&lt;std::string&gt;::iterator it = pSemi-&gt;begin();
+				for (it; it != pSemi-&gt;end(); it++)
+				{
+<input onclick="expand_collapse(simplediv38.id, this.id)" type="button" value=" - " id="myButton38" /><div id="simplediv38" style="display:block; ">
+					if (typeTable_.getTypeTable().find(*it) != typeTable_.getTypeTable().end())
+					{
+<input onclick="expand_collapse(simplediv39.id, this.id)" type="button" value=" - " id="myButton39" /><div id="simplediv39" style="display:block; ">
+						if (file != typeTable_.getTypeTable().find(*it)-&gt;second.filename)
+						{
+<input onclick="expand_collapse(simplediv40.id, this.id)" type="button" value=" - " id="myButton40" /><div id="simplediv40" style="display:block; ">
+							if (dependendencyMap[file].insert(typeTable_.getTypeTable().find(*it)-&gt;second.filename).second 
+								!= false)
+							{
+<input onclick="expand_collapse(simplediv41.id, this.id)" type="button" value=" - " id="myButton41" /><div id="simplediv41" style="display:block; ">
+								std::string fileName2_ = typeTable_.getTypeTable().find(*it)-&gt;second.filename;
+								addDependencyToGraph(file, fileName2_);
+								std::string str1 = file.substr(file.find_last_of("\\") + 1);
+								std::string str2 = fileName2_.substr(fileName2_.find_last_of("\\") + 1);
+								if ((str1.find_last_of(".cpp") &lt; str1.length()) 
+									&& (str2.find_last_of(".h") &lt; str2.length()))
+								{
+<input onclick="expand_collapse(simplediv42.id, this.id)" type="button" value=" - " id="myButton42" /><div id="simplediv42" style="display:block; ">
+									if (str1.substr(0, str1.find_last_of(".cpp") - 4).compare
+									(str2.substr(0, str2.find_last_of(".h") - 2)) == 0)
+									{
+<input onclick="expand_collapse(simplediv43.id, this.id)" type="button" value=" - " id="myButton43" /><div id="simplediv43" style="display:block; ">dependendencyMap[fileName2_].insert(file);
+										addDependencyToGraph(fileName2_, file);}</div>
+								}</div>
+								
+							}</div>
+						}</div>
+					}</div>
+				}</div>
+			}</div>
+		}</div>
+	}</div>
+	Utilities::StringHelper::Title("Dependency Analysis is done.");
+}</div>
+
+#ifdef TEST_DEPENDANAL
+int main()
+{
+<input onclick="expand_collapse(simplediv44.id, this.id)" type="button" value=" - " id="myButton44" /><div id="simplediv44" style="display:block; ">
+	DependAnal dan;
+	dan.ProcessCommandLine(argc, argv);
+	dan.fetchSourcseFiles();
+	dan.processSourceCode();
+	return 0;
+}</div>
+#endif</pre>
+</body>
+</html>
